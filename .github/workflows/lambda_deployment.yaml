@@ -1,0 +1,38 @@
+name: Deploy Lambda Function
+
+on:
+  push:
+    branches:
+      - main   # هر بار روی main push کنی اجرا میشه
+  workflow_dispatch:  # اجازه اجرای دستی هم میده
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # مرحله ۱: گرفتن کد از repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # مرحله ۲: ساخت فایل zip از Lambda
+      - name: Zip Lambda function
+        run: |
+          cd lambda_function
+          zip -r ../function.zip .
+          cd ..
+
+      # مرحله ۳: ست کردن AWS credentials (از Secrets)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # مرحله ۴: آپدیت Lambda در AWS
+      - name: Update Lambda function
+        run: |
+          aws lambda update-function-code \
+            --function-name arn:aws:lambda:us-east-1:634541169753:function:ChatbotLambda \
+            --zip-file fileb://function.zip
