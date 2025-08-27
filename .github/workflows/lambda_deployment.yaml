@@ -34,5 +34,5 @@ jobs:
       - name: Update Lambda function
         run: |
           aws lambda update-function-code \
-            --function-name arn:aws:lambda:us-east-1:634541169753:function:ChatbotLambda \
+            --function-name ChatbotLambda \
             --zip-file fileb://function.zip
