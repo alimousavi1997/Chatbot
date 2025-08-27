@@ -1,7 +1,7 @@
 import json
 import boto3
 
-# اتصال به Bedrock
+# connection to bedrock
 bedrock = boto3.client(
     service_name="bedrock-runtime",
     region_name="us-east-1"
@@ -12,7 +12,7 @@ def lambda_handler(event, context):
         body = json.loads(event["body"])
         user_message = body.get("message", "")
 
-        # ورودی برای مدل Nova
+        # Input for model Nova
         payload = {
             "messages": [
                 {
@@ -29,7 +29,7 @@ def lambda_handler(event, context):
         }
 
         response = bedrock.invoke_model(
-            modelId="amazon.nova-lite-v1:0",   # یا Claude بعداً
+            modelId="amazon.nova-lite-v1:0",   # Later Claude maybe
             contentType="application/json",
             accept="application/json",
             body=json.dumps(payload)

@@ -3,26 +3,26 @@ name: Deploy Lambda Function
 on:
   push:
     branches:
-      - main   # هر بار روی main push کنی اجرا میشه
-  workflow_dispatch:  # اجازه اجرای دستی هم میده
+      - main   
+  workflow_dispatch:  
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # مرحله ۱: گرفتن کد از repo
+      # Stage 1: getting code from repo (checkout)
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # مرحله ۲: ساخت فایل zip از Lambda
+      # Stage 2: Building zip file from Lambda
       - name: Zip Lambda function
         run: |
           cd lambda_function
           zip -r ../function.zip .
           cd ..
 
-      # مرحله ۳: ست کردن AWS credentials (از Secrets)
+      # Set AWS credentials (from Github secrets)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,7 +30,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "us-east-1"
 
-      # مرحله ۴: آپدیت Lambda در AWS
+      # Stage 4: Update Lambda in AWS
       - name: Update Lambda function
         run: |
           aws lambda update-function-code \
